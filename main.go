@@ -4,16 +4,16 @@ import (
 	"bytes"
 	"image"
 	"image/png"
+	"os"
 	"os/exec"
 	"time"
 
-	"github.com/JamesHovious/w32"
+	"github.com/TheTitanrain/w32"
 	"github.com/hugolgst/rich-go/client"
 	"github.com/oliamb/cutter"
 	"github.com/redraskal/star-citizen-rich-presence/rsi"
 	"github.com/redraskal/star-citizen-rich-presence/utils"
 	"github.com/redraskal/star-citizen-rich-presence/win"
-	"github.com/vardius/shutdown"
 )
 
 const StarCitizenExe = "StarCitizen.exe"
@@ -26,10 +26,10 @@ func main() {
 	println("Star Citizen Rich Presence by redraskal.")
 	println("https://github.com/redraskal/star-citizen-rich-presence")
 	println("--------------------------------------------------------\n")
-	go shutdown.GracefulStop(func() {
-		println("Disconnecting from Discord...")
-		client.Logout()
-	})
+	// go shutdown.GracefulStop(func() {
+	// 	println("Disconnecting from Discord...")
+	// 	client.Logout()
+	// })
 	loop()
 }
 
@@ -38,12 +38,12 @@ func loop() {
 	hwnd := win.WaitFor(StarCitizenExe, CaptureInterval)
 	rsi.UpdateInstallPath()
 	rsi.RequireConsoleCmd()
-	println("\nConnecting to Discord...")
-	if err := client.Login(DiscordAppID); err != nil {
-		panic(err)
-	}
+	// println("\nConnecting to Discord...")
+	// if err := client.Login(DiscordAppID); err != nil {
+	// 	panic(err)
+	// }
 	UpdateStartTimestamp(&DefaultActivity)
-	client.SetActivity(DefaultActivity)
+	// client.SetActivity(DefaultActivity)
 	capture_loop(DefaultActivity, hwnd)
 }
 
@@ -51,19 +51,19 @@ func capture_loop(a client.Activity, hwnd w32.HWND) {
 	s, err := capture(hwnd)
 	if err != nil {
 		println(err.Error())
-		client.Logout()
+		// client.Logout()
 		time.Sleep(CaptureInterval)
 		loop()
 		return
 	}
 	println("\nCurrent Location:", s.Location.Name)
-	if err = UpdateActivity(a, s); err != nil {
-		println(err.Error())
-		client.Logout()
-		time.Sleep(CaptureInterval)
-		loop()
-		return
-	}
+	// if err = UpdateActivity(a, s); err != nil {
+	// 	println(err.Error())
+	// 	client.Logout()
+	// 	time.Sleep(CaptureInterval)
+	// 	loop()
+	// 	return
+	// }
 	time.Sleep(CaptureInterval)
 	capture_loop(a, hwnd)
 }
@@ -88,15 +88,13 @@ func capture(hwnd w32.HWND) (utils.SessionInfo, error) {
 
 	cropped = utils.PrepareImageForOCR(cropped)
 
-	// file, _ := os.Create("test.png")
-	// defer file.Close()
+	file, _ := os.Create("test.png")
+	defer file.Close()
 	buf := new(bytes.Buffer)
 	if err = png.Encode(buf, cropped); err != nil {
 		return utils.SessionInfo{}, err
 	}
-	// if err = png.Encode(file, cropped); err != nil {
-	// 	return SessionInfo{}, err
-	// }
+	png.Encode(file, cropped)
 
 	println("Running OCR...\n")
 

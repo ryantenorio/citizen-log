@@ -3,7 +3,7 @@ package win
 import (
 	"time"
 
-	"github.com/JamesHovious/w32"
+	"github.com/TheTitanrain/w32"
 )
 
 func WaitFor(name string, interval time.Duration) w32.HWND {

@@ -3,7 +3,7 @@ package win
 import (
 	"image"
 
-	"github.com/JamesHovious/w32"
+	"github.com/TheTitanrain/w32"
 	"github.com/kbinani/screenshot"
 )
 

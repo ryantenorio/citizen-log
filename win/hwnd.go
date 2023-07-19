@@ -1,6 +1,6 @@
 package win
 
-import "github.com/JamesHovious/w32"
+import "github.com/TheTitanrain/w32"
 
 func HWND(pid int) w32.HWND {
 	var hwnd w32.HWND
